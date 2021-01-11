@@ -17,9 +17,13 @@
 
 package com.example.android.marsrealestate.overview
 
+import android.telecom.Call
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.android.marsrealestate.network.MarsApi
+import okhttp3.Response
+import javax.security.auth.callback.Callback
 
 /**
  * The [ViewModel] that is attached to the [OverviewFragment].
@@ -45,6 +49,15 @@ class OverviewViewModel : ViewModel() {
      */
     private fun getMarsRealEstateProperties() {
         // TODO (05) Call the MarsApi to enqueue the Retrofit request, implementing the callbacks
-        _response.value = "Set the Mars API Response here!"
+        MarsApi.retrofitService.getProperties().enqueue( object: retrofit2.Callback<String> {
+            override fun onFailure(call: retrofit2.Call<String>, t: Throwable) {
+                _response.value = "Failure: " + t.message
+            }
+
+            override fun onResponse(call: retrofit2.Call<String>, response: retrofit2.Response<String>) {
+                _response.value = response.body()
+            }
+
+        })
     }
 }
